@@ -39,6 +39,28 @@ class Generic(object):
         return """alias {0}='eval "$(TF_ALIAS={0} PYTHONIOENCODING=utf-8 """ \
                """thefuck "$(fc -ln -1)")"'""".format(alias_name)
 
+    def app_aliases(self, alias_name):
+        """Returns main alias plus extra trigger aliases (babi, wtf...)."""
+        from ..utils import get_extra_aliases
+        parts = [self.app_alias(alias_name)]
+        for extra in get_extra_aliases():
+            if extra != alias_name:
+                parts.append(self.app_alias(extra))
+        return '\n'.join(parts)
+
+    def instant_mode_aliases(self, alias_name):
+        """Returns instant-mode alias plus extras when applicable."""
+        main = self.instant_mode_alias(alias_name)
+        # First-stage logger setup contains --shell-logger, no extras needed.
+        if '--shell-logger' in main:
+            return main
+        from ..utils import get_extra_aliases
+        parts = [main]
+        for extra in get_extra_aliases():
+            if extra != alias_name:
+                parts.append(self.app_alias(extra))
+        return '\n'.join(parts)
+
     def instant_mode_alias(self, alias_name):
         warn("Instant mode not supported by your shell")
         return self.app_alias(alias_name)
