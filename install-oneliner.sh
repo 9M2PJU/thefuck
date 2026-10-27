@@ -38,7 +38,7 @@ case "${SHELL:-/bin/bash}" in
   *fish) RC="$HOME/.config/fish/config.fish" ;;
   *) RC="$HOME/.bashrc" ;;
 esac
-LINE='eval $(thefuck --alias)'
+LINE='eval "$(thefuck --alias)"'
 if [ -f "$RC" ] && grep -qF "$LINE" "$RC"; then
   echo "Alias already in $RC"
 else

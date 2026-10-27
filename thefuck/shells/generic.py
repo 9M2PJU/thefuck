@@ -46,7 +46,11 @@ class Generic(object):
         for extra in get_extra_aliases():
             if extra != alias_name:
                 parts.append(self.app_alias(extra))
-        return '\n'.join(parts)
+        # Join with `;` + newline so both quoted
+        # `eval "$(thefuck --alias)"` and unquoted `eval $(thefuck --alias)`
+        # (which collapses newlines to spaces) stay valid bash/zsh.
+        # rstrip avoids a lone `;` line which bash rejects.
+        return ';\n'.join(p.rstrip() for p in parts)
 
     def instant_mode_aliases(self, alias_name):
         """Returns instant-mode alias plus extras when applicable."""
@@ -59,7 +63,7 @@ class Generic(object):
         for extra in get_extra_aliases():
             if extra != alias_name:
                 parts.append(self.app_alias(extra))
-        return '\n'.join(parts)
+        return ';\n'.join(p.rstrip() for p in parts)
 
     def instant_mode_alias(self, alias_name):
         warn("Instant mode not supported by your shell")
